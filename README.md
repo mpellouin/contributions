@@ -3,7 +3,7 @@
 
 A tool allowing you to display or build your merged contributions from different services. Currently supported: Github, Gitlab.
 
-![https://chart-studio.plotly.com/~mpellouin/4.png](https://chart-studio.plotly.com/~mpellouin/2.png)
+![https://chart-studio.plotly.com/~mpellouin/2.jpg](https://chart-studio.plotly.com/~mpellouin/2.jpg)
 
 
 ## Authors
