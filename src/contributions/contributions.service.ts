@@ -34,7 +34,7 @@ export class ContributionsService {
     return data;
   }
 
-  async createHeatmap(data: NormalizedContributions, ids: string): Promise<string> {
+  async createHeatmap(data: NormalizedContributions, githubId: string, gitlabId: string): Promise<string> {
     let returnURL = '';
     const contributionsPerDay = this.computeHeatmapData(data);
     const totalContributions = Object.values(data).reduce((acc, val) => acc + val, 0);
@@ -42,25 +42,33 @@ export class ContributionsService {
       {
         z: contributionsPerDay,
         y: ['Sat', 'Fri', 'Thu', 'Wed', 'Tue', 'Mon', 'Sun'],
+        // TODO: Change x axis to either : start/end of week date or somehow figure out how to display the month
         x: ['W-52', 'W-51', 'W-50', 'W-49', 'W-48', 'W-47', 'W-46', 'W-45', 'W-44', 'W-43', 'W-42', 'W-41', 'W-40', 'W-39', 'W-38', 'W-37', 'W-36', 'W-35', 'W-34', 'W-33', 'W-32', 'W-31', 'W-30', 'W-29', 'W-28', 'W-27', 'W-26', 'W-25', 'W-24', 'W-23', 'W-22', 'W-21', 'W-20', 'W-19', 'W-18', 'W-17', 'W-16', 'W-15', 'W-14', 'W-13', 'W-12', 'W-11', 'W-10', 'W-9', 'W-8', 'W-7', 'W-6', 'W-5', 'W-4', 'W-3', 'W-2', 'W-1', 'W0'],
         type: 'heatmap',
-        name: `${ids} total contributions: ${totalContributions}`,
         colorscale: 'Greens',
-        reversescale: true,
+        xgap: 2,
+        ygap: 2,
       }
     ]
     const layout = {
-      title: `${ids} total contributions: ${totalContributions}`,
-      xaxis: {
-        title: 'Weeks',
+      title: {
+        text: `Github user ${githubId} and Gitlab user ${gitlabId} total contributions: ${totalContributions}`,
+        font: {
+          color: '#EEEEEE'
+        }
       },
-      yaxis: {
-        title: 'Days',
+      width: 1000,
+      height: 300,
+      xgap: 1,
+      paper_bgcolor: '#31363F',
+      plot_bgcolor: '#222831',
+      font: {
+        color: '#EEEEEE'
       }
     }
     const graphOptions = {
       fileopt: 'overwrite',
-      filename: ids,
+      filename: githubId + '_' + gitlabId,
       layout
     };
 

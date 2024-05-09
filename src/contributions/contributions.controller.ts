@@ -46,7 +46,7 @@ export class ContributionsController {
     );
 
     try {
-    return this.contributionsService.createHeatmap(totalContributions, `${github_id}-${gitlab_id}`);
+    return this.contributionsService.createHeatmap(totalContributions, github_id, gitlab_id);
     } catch (error) {
       console.error(error)
       throw new InternalServerErrorException("Error while creating heatmap");
