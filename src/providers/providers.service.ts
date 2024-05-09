@@ -3,10 +3,12 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { GithubResponse, NormalizedContributions } from './providers.dto';
 
 @Injectable()
 export class ProvidersService {
-  async getContributionsFromGithub(name: string): Promise<any> {
+  async getContributionsFromGithub(name: string): Promise<GithubResponse> {
+
     const response = await fetch(`https://api.github.com/graphql`, {
       method: 'POST',
       headers: {
@@ -35,7 +37,6 @@ export class ProvidersService {
     });
 
     const data = await response.json();
-    console.log(data);
 
     if (data.errors) {
       if (data.errors[0].type === 'NOT_FOUND') {
@@ -48,7 +49,7 @@ export class ProvidersService {
     return data.data.user;
   }
 
-  async getContributionsFromGitlab(name: string): Promise<any> {
+  async getContributionsFromGitlab(name: string): Promise<NormalizedContributions> {
     try {
     const response = await fetch(
       `https://gitlab.com/users/${name}/calendar.json`,
