@@ -67,6 +67,15 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "coveragePathIgnorePatterns": [
+      ".module.ts",
+      "main.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+          "branches": 66.5
+      }
+  },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
