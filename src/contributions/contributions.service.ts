@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { parse } from 'date-fns';
+import { addWeeks, endOfWeek, format, parse } from 'date-fns';
 import { GithubResponse, NormalizedContributions } from 'src/providers/providers.dto';
 import * as plotly from 'plotly';
 
@@ -42,8 +42,7 @@ export class ContributionsService {
       {
         z: contributionsPerDay,
         y: ['Sat', 'Fri', 'Thu', 'Wed', 'Tue', 'Mon', 'Sun'],
-        // TODO: Change x axis to either : start/end of week date or somehow figure out how to display the month
-        x: ['W-52', 'W-51', 'W-50', 'W-49', 'W-48', 'W-47', 'W-46', 'W-45', 'W-44', 'W-43', 'W-42', 'W-41', 'W-40', 'W-39', 'W-38', 'W-37', 'W-36', 'W-35', 'W-34', 'W-33', 'W-32', 'W-31', 'W-30', 'W-29', 'W-28', 'W-27', 'W-26', 'W-25', 'W-24', 'W-23', 'W-22', 'W-21', 'W-20', 'W-19', 'W-18', 'W-17', 'W-16', 'W-15', 'W-14', 'W-13', 'W-12', 'W-11', 'W-10', 'W-9', 'W-8', 'W-7', 'W-6', 'W-5', 'W-4', 'W-3', 'W-2', 'W-1', 'W0'],
+        x: this.generateDateLegend(),
         type: 'heatmap',
         colorscale: 'Greens',
         xgap: 2,
@@ -56,6 +55,15 @@ export class ContributionsService {
         font: {
           color: '#EEEEEE'
         }
+      },
+      yaxis: {
+        tickvals: [0, 2, 4, 6],
+        color: '#EEEEEE'
+      },
+      xaxis: {
+        dtick: 2,
+        color: '#EEEEEE'
+
       },
       width: 1000,
       height: 300,
@@ -88,6 +96,18 @@ export class ContributionsService {
     });
 
     return returnURL;
+  }
+
+  generateDateLegend(): string[] {
+    const dateLegend = [];
+    const currentDate = new Date();
+    for (let i = 0; i <= 52; i++) {
+      const d = addWeeks(endOfWeek(currentDate, { weekStartsOn: 0 }), -i);
+      dateLegend.push(format(d, 'MMM dd'));
+    }
+
+    return dateLegend.reverse();
+
   }
 
   computeHeatmapData(data: NormalizedContributions): (number | null)[][] {
