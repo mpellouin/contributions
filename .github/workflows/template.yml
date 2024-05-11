@@ -1,9 +1,6 @@
 name: Update README Image
 
 on:
-  push:
-    branches:
-      - '*'
   schedule:
     - cron: "0 0 * * *"
 
