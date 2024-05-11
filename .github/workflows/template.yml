@@ -1,0 +1,52 @@
+name: Update README Image
+
+on:
+  push:
+    branches:
+      - '*'
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  update_readme_image:
+    runs-on: ubuntu-latest
+    environment: CI
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Start API server
+        run: |
+          yarn --frozen-lockfile
+          # export $(cat .env | xargs)
+          yarn start &
+          sleep 10
+        env:
+          PLOTLY_USER: ${{ secrets.PLOTLY_USER }}
+          PLOTLY_API_KEY: ${{ secrets.PLOTLY_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
+      - name: Api check
+        run: |
+          curl http://localhost:3000
+
+      - name: Generate image link and download
+        run: |
+          GITHUB_ID="mpellouin"                                                 
+          GITLAB_ID="mpellouin"
+          API_URL="http://localhost:3000"
+          IMAGE_URL="$(curl -s -X GET "$API_URL/contributions/heatmap?github_id=$GITHUB_ID&gitlab_id=$GITLAB_ID")"
+          echo $IMAGE_URL
+          wget $IMAGE_URL -O new_image.jpg
+
+      - name: Replace old image in repository
+        continue-on-error: true
+        run: |
+          IMG_PATH="assets/README_image.jpg"
+          GITHUB_USER="mpellouin"
+          cp new_image.jpg $IMG_PATH
+          git config --global user.name $GITHUB_USER
+          git config --global user.email '$GITHUB_USER@users.noreply.github.com'
+          git add $IMG_PATH
+          git commit -m "Automatic update of README image"
+          git push

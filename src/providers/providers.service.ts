@@ -42,6 +42,7 @@ export class ProvidersService {
       if (data.errors[0].type === 'NOT_FOUND') {
         throw new NotFoundException('User not found');
       } else {
+        console.error(data.errors);
         throw new InternalServerErrorException();
       }
     }
