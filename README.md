@@ -74,6 +74,9 @@ Start the server
   yarn start
 ```
 
+## Known issues
+
+Plotly free plan includes 100 plot generation. Therefore if you use the github action and have a free plan on plotly, the action will stop working the 100th day.
 
 ## License
 
