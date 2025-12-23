@@ -66,7 +66,6 @@ export class ContributionsService {
       xaxis: {
         dtick: 2,
         color: style.font_color
-
       },
       width: 1000,
       height: 300,
