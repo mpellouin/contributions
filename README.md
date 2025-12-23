@@ -27,14 +27,33 @@ A tool allowing you to display or build your merged contributions from different
 #### Get Heatmap from contribution data (returns URL)
 
 ```http
-  GET /contributions/heatmap?github_id=${github_id}&gitlab_id=${gitlab_id}
+  GET /contributions/heatmap?github_id=${github_id}&gitlab_id=${gitlab_id}&style=${style}
 ```
 
 | Parameter   | Type     | Description                         |
 | :---------- | :------- | :---------------------------------- |
 | `github_id` | `string` | **Required**. Your github username. |
 | `gitlab_id` | `string` | **Required**. Your gitlab username. |
+| `style`     | `string` | **Optional**. Style theme for the heatmap. Available options: `default`, `github`, `blue`, `purple`, `warm`, `cool`, `light`, `grayscale`. Defaults to `default` if not provided. |
 
+
+## Heatmap Styles
+
+The application provides several pre-configured style themes for the heatmap visualization:
+
+- **default**: Dark theme with green color scale (original style)
+- **github**: GitHub-inspired dark theme with green color scale
+- **blue**: Cool blue theme with blue color scale
+- **purple**: Elegant purple theme with purple color scale
+- **warm**: Warm theme with yellow-orange-red color scale
+- **cool**: Teal/cyan theme with teal color scale
+- **light**: Light theme with green color scale (suitable for light backgrounds)
+- **grayscale**: Monochrome theme with grayscale color scale
+
+Example usage:
+```http
+GET /contributions/heatmap?github_id=mpellouin&gitlab_id=mpellouin&style=github
+```
 
 
 ## Environment Variables

@@ -30,7 +30,11 @@ export class ContributionsController {
   }
 
   @Get('/heatmap')
-  async getHeatmap(@Query('github_id') github_id: string, @Query('gitlab_id') gitlab_id: string): Promise<string> {
+  async getHeatmap(
+    @Query('github_id') github_id: string, 
+    @Query('gitlab_id') gitlab_id: string,
+    @Query('style') style?: string
+  ): Promise<string> {
     if (!github_id || !gitlab_id) {
       throw new BadRequestException("Missing github_id or gitlab_id query parameter")
     }
@@ -46,7 +50,7 @@ export class ContributionsController {
     );
 
     try {
-    return this.contributionsService.createHeatmap(totalContributions, github_id, gitlab_id);
+    return this.contributionsService.createHeatmap(totalContributions, github_id, gitlab_id, style);
     } catch (error) {
       console.error(error)
       throw new InternalServerErrorException("Error while creating heatmap");

@@ -181,6 +181,68 @@ describe('ContributionsController', () => {
         totalContributions,
         github_id,
         gitlab_id,
+        undefined,
+      );
+    });
+
+    it('should return heatmap with custom style', async () => {
+      const github_id = 'github_id';
+      const gitlab_id = 'gitlab_id';
+      const style = 'github';
+      const githubContributions = {
+        login: 'test',
+        contributionsCollection: {
+          contributionCalendar: {
+            weeks: [
+              {
+                contributionDays: [
+                  { date: '2022-01-01', contributionCount: 5 },
+                  { date: '2022-01-02', contributionCount: 3 },
+                ],
+              },
+            ],
+          },
+        },
+      };
+      const gitlabContributions = {
+        '2022-01-01': 2,
+        '2022-01-03': 4,
+      };
+      const normalizedGithubContributions = {
+        '2022-01-01': 5,
+        '2022-01-02': 3,
+      };
+      const totalContributions = {
+        '2022-01-01': 7,
+        '2022-01-02': 3,
+        '2022-01-03': 4,
+      };
+      const heatmap = 'heatmap';
+
+      jest
+        .spyOn(providersService, 'getContributionsFromGithub')
+        .mockResolvedValue(githubContributions);
+      jest
+        .spyOn(providersService, 'getContributionsFromGitlab')
+        .mockResolvedValue(gitlabContributions);
+      jest
+        .spyOn(contributionsService, 'normalizeGithubContributions')
+        .mockReturnValue(normalizedGithubContributions);
+      jest
+        .spyOn(contributionsService, 'computeTotalContributions')
+        .mockReturnValue(totalContributions);
+      jest
+        .spyOn(contributionsService, 'createHeatmap')
+        .mockReturnValue(Promise.resolve(heatmap));
+
+      const result = await controller.getHeatmap(github_id, gitlab_id, style);
+
+      expect(result).toEqual(heatmap);
+      expect(contributionsService.createHeatmap).toHaveBeenCalledWith(
+        totalContributions,
+        github_id,
+        gitlab_id,
+        style,
       );
     });
 

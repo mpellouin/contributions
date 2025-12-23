@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { addWeeks, endOfWeek, format, parse } from 'date-fns';
 import { GithubResponse, NormalizedContributions } from 'src/providers/providers.dto';
 import * as plotly from 'plotly';
+import { getHeatmapStyle } from './heatmap-styles';
 
 @Injectable()
 export class ContributionsService {
@@ -34,17 +35,19 @@ export class ContributionsService {
     return data;
   }
 
-  async createHeatmap(data: NormalizedContributions, githubId: string, gitlabId: string): Promise<string> {
+  async createHeatmap(data: NormalizedContributions, githubId: string, gitlabId: string, styleName?: string): Promise<string> {
     let returnURL = '';
     const contributionsPerDay = this.computeHeatmapData(data);
     const totalContributions = Object.values(data).reduce((acc, val) => acc + val, 0);
+    const style = getHeatmapStyle(styleName);
+    
     const heatmapData = [
       {
         z: contributionsPerDay,
         y: ['Sat', 'Fri', 'Thu', 'Wed', 'Tue', 'Mon', 'Sun'],
         x: this.generateDateLegend(),
         type: 'heatmap',
-        colorscale: 'Greens',
+        colorscale: style.colorscale,
         xgap: 2,
         ygap: 2,
       }
@@ -53,25 +56,25 @@ export class ContributionsService {
       title: {
         text: `Github user ${githubId} and Gitlab user ${gitlabId} total contributions: ${totalContributions}`,
         font: {
-          color: '#EEEEEE'
+          color: style.title_color
         }
       },
       yaxis: {
         tickvals: [0, 2, 4, 6],
-        color: '#EEEEEE'
+        color: style.font_color
       },
       xaxis: {
         dtick: 2,
-        color: '#EEEEEE'
+        color: style.font_color
 
       },
       width: 1000,
       height: 300,
       xgap: 1,
-      paper_bgcolor: '#31363F',
-      plot_bgcolor: '#222831',
+      paper_bgcolor: style.paper_bgcolor,
+      plot_bgcolor: style.plot_bgcolor,
       font: {
-        color: '#EEEEEE'
+        color: style.font_color
       }
     }
     const graphOptions = {
